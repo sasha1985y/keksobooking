@@ -1,62 +1,57 @@
-import {promotions} from './utilites.js';
-import {ROOMS, GUESTS} from './data.js';
+import {promotions} from './data.js';
 
 const template = document.querySelector('#card').content;
 const templateContent = template.querySelector('.popup');
-const blockCard = document.getElementById('map-canvas');
 const fragment = document.createDocumentFragment();
-
-
-
-
 
 const addCardPlaceHolers = () => {
   for (let a = 0; a < promotions.length; a++) {
     const promotion = promotions[a];
     const clonedTemplateContent = templateContent.cloneNode(true);
-
+    
     clonedTemplateContent.querySelector('.popup__avatar').src = promotion.autor.avatar;
     clonedTemplateContent.querySelector('.popup__title').textContent = promotion.offer.title;
     clonedTemplateContent.querySelector('.popup__text--address').textContent = promotion.offer.adress;
     clonedTemplateContent.querySelector('.popup__text--price').textContent = promotion.offer.price +'₽/ночь';
     clonedTemplateContent.querySelector('.popup__type').textContent = promotion.offer.type;
 
-    const popupCapacity = clonedTemplateContent.querySelector('.popup__text--capacity');
-    if(promotion.offer.rooms === ROOMS[0] && promotion.offer.guests === GUESTS[0]) {
-      popupCapacity.textContent = `${ROOMS[0]} комната для ${GUESTS[0]} гостя`;
-    } else if (promotion.offer.rooms === ROOMS[0] && promotion.offer.guests === GUESTS[1]) {
-      popupCapacity.textContent = `${ROOMS[0]} комната для ${GUESTS[1]} гостей`;
-    } else if (promotion.offer.rooms === ROOMS[0] && promotion.offer.guests === GUESTS[2]) {
-      popupCapacity.textContent = `${ROOMS[0]} комната для ${GUESTS[2]} гостей`; 
-    } else if (promotion.offer.rooms === ROOMS[0] && promotion.offer.guests === GUESTS[3]) {
-      popupCapacity.textContent = `${ROOMS[0]} комната ${GUESTS[3]}`;
-    } else if(promotion.offer.rooms === ROOMS[1] && promotion.offer.guests === GUESTS[0]) {
-      popupCapacity.textContent = `${ROOMS[1]} комнаты для ${GUESTS[0]} гостя`;
-    } else if (promotion.offer.rooms === ROOMS[1] && promotion.offer.guests === GUESTS[1]) {
-      popupCapacity.textContent = `${ROOMS[1]} комнаты для ${GUESTS[1]} гостей`;
-    } else if (promotion.offer.rooms === ROOMS[1] && promotion.offer.guests === GUESTS[2]) {
-      popupCapacity.textContent = `${ROOMS[1]} комнаты для ${GUESTS[2]} гостей`; 
-    } else if (promotion.offer.rooms === ROOMS[1] && promotion.offer.guests === GUESTS[3]) {
-      popupCapacity.textContent = `${ROOMS[1]} комнаты ${GUESTS[3]}`;
-    } else if(promotion.offer.rooms === ROOMS[2] && promotion.offer.guests === GUESTS[0]) {
-      popupCapacity.textContent = `${ROOMS[2]} комнаты для ${GUESTS[0]} гостя`;
-    } else if (promotion.offer.rooms === ROOMS[2] && promotion.offer.guests === GUESTS[1]) {
-      popupCapacity.textContent = `${ROOMS[2]} комнаты для ${GUESTS[1]} гостей`;
-    } else if (promotion.offer.rooms === ROOMS[2] && promotion.offer.guests === GUESTS[2]) {
-      popupCapacity.textContent = `${ROOMS[2]} комнаты для ${GUESTS[2]} гостей`; 
-    } else if (promotion.offer.rooms === ROOMS[2] && promotion.offer.guests === GUESTS[3]) {
-      popupCapacity.textContent = `${ROOMS[2]} комнаты ${GUESTS[3]}`;
-    } else if(promotion.offer.rooms === ROOMS[3] && promotion.offer.guests === GUESTS[0]) {
-      popupCapacity.textContent = `${ROOMS[3]} комнат для ${GUESTS[0]} гостя`;
-    } else if (promotion.offer.rooms === ROOMS[3] && promotion.offer.guests === GUESTS[1]) {
-      popupCapacity.textContent = `${ROOMS[3]} комнат для ${GUESTS[1]} гостей`;
-    } else if (promotion.offer.rooms === ROOMS[3] && promotion.offer.guests === GUESTS[2]) {
-      popupCapacity.textContent = `${ROOMS[3]} комнат для ${GUESTS[2]} гостей`; 
-    } else if (promotion.offer.rooms === ROOMS[3] && promotion.offer.guests === GUESTS[3]) {
-      popupCapacity.textContent = `${ROOMS[3]} комнат ${GUESTS[3]}`;
+    const roomPronounce = () => {
+      let room;
+      switch (promotion.offer.rooms % 10) {
+        case 0:
+        case 5:
+        case 6:
+        case 7:
+        case 8:
+        case 9:
+          room = `${promotion.offer.rooms} комнат`;
+          break;
+        case 2:
+        case 3:
+        case 4:
+          room = `${promotion.offer.rooms} комнаты`;
+          break;
+        case 1:
+          room = `${promotion.offer.rooms} комната`;
+          break;  
+      }
+      return room;
     };
 
-
+    const guestPronounce = () => {
+      let guest;
+      if (promotion.offer.guests % 10 === 1) {
+        guest = `для ${promotion.offer.guests} гостя`;
+      } else if (promotion.offer.guests % 10 > 1) {
+        guest = `для ${promotion.offer.guests} гостей`;
+      } else if (promotion.offer.guests === 'не для гостей') {
+        guest = `${promotion.offer.guests}`; 
+      }
+      return guest;
+    }
+    
+    clonedTemplateContent.querySelector('.popup__text--capacity').textContent = `${roomPronounce()} ${guestPronounce()}`;
+    
     clonedTemplateContent.querySelector('.popup__text--time').textContent = 'Заезд после ' + promotion.offer.checkin + ', выезд до ' + promotion.offer.checkout;
     
     const featureWifi = (element) => element.indexOf('wifi', 0);
@@ -99,11 +94,8 @@ const addCardPlaceHolers = () => {
     if(promotion.offer.photos !== '') {popupPhoto.classList.remove('hidden');};
 
     fragment.appendChild(clonedTemplateContent);
-    blockCard.appendChild(fragment);
-    
+    return fragment;
   };
-  return blockCard;
   
-}
-const findFeatures = (element) => element.offer.features;
-console.log(addCardPlaceHolers(),promotions.map(findFeatures));
+};
+export {addCardPlaceHolers};

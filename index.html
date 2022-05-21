@@ -3,8 +3,9 @@
 <head>
   <meta charset="utf-8">
   <link rel="stylesheet" href="css/normalize.css">
-  <link rel="stylesheet" href="css/style.css">
-  <!--link rel="stylesheet" href="nouislider/nouislider.css"-->
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/leaflet.css">
+  <link rel="stylesheet" href="css/nouislider.css">
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
   <title>Кексобукинг</title>
 </head>
@@ -64,7 +65,7 @@
             <label class="map__feature map__feature--elevator" for="filter-elevator">Лифт</label>
             <input type="checkbox" name="features" value="conditioner" id="filter-conditioner" class="map__checkbox visually-hidden">
             <label class="map__feature map__feature--conditioner" for="filter-conditioner">Кондиционер</label>
-           </fieldset>
+          </fieldset>
         </form>
       </div>
     </section>
@@ -72,7 +73,7 @@
     <!-- Форма объявления -->
     <section class="notice">
       <h2 class="notice__title">Ваше объявление</h2>
-      <form class="ad-form" method="post" enctype="multipart/form-data" autocomplete="off">
+      <form class="ad-form" action="https://25.javascript.pages.academy/keksobooking" method="post" enctype="multipart/form-data" autocomplete="off">
         <fieldset class="ad-form-header">
           <legend class="ad-form-header__title">Ваша фотография (для карты)</legend>
           <div class="ad-form-header__upload">
@@ -88,11 +89,17 @@
         </fieldset>
         <fieldset class="ad-form__element ad-form__element--wide">
           <label class="ad-form__label" for="title">Заголовок объявления</label>
-          <input id="title" name="title" type="text" placeholder="Милая, уютная квартирка в центре Токио">
+          <input id="title" name="title" type="text" minlength="30" maxlength="101" placeholder="Милая, уютная квартирка в центре Токио" required
+            data-pristine-required-message = "Обязательное поле"
+            data-pristine-minlength-message = "Минимальная длина 30 символов"
+            data-pristine-maxlength-message = "Максимальная длина 100 символов"/>
         </fieldset>
         <fieldset class="ad-form__element ad-form__element--wide">
           <label class="ad-form__label" for="address">Адрес (координаты)</label>
-          <input id="address" name="address" type="text">
+          <input id="address" name="address" type="text" minlength="15" maxlength="19" placeholder="0, 0" required readonly
+            data-pristine-required-message = "Обязательное поле"
+            data-pristine-minlength-message = "Минимальная длина 15 символов"
+            data-pristine-maxlength-message = "Максимальная длина 18 символов">
         </fieldset>
         <fieldset class="ad-form__element">
           <label class="ad-form__label" for="type">Тип жилья</label>
@@ -106,7 +113,9 @@
         </fieldset>
         <fieldset class="ad-form__element">
           <label class="ad-form__label" for="price">Цена за ночь, руб.</label>
-          <input id="price" name="price" type="number" placeholder="5000">
+          <input id="price" name="price" type="number" min="0" max="100000" placeholder="5000" required
+            data-pristine-required-message = "Обязательное поле"
+            data-pristine-max-message = "Максимальное значение — 100000">
           <div class="ad-form__slider"></div>
         </fieldset>
         <fieldset class="ad-form__element ad-form__element--time">
@@ -134,9 +143,9 @@
         <fieldset class="ad-form__element">
           <label class="ad-form__label" for="capacity">Количество мест</label>
           <select id="capacity" name="capacity">
-            <option value="3" selected>для 3 гостей</option>
+            <option value="3">для 3 гостей</option>
             <option value="2">для 2 гостей</option>
-            <option value="1">для 1 гостя</option>
+            <option value="1" selected>для 1 гостя</option>
             <option value="0">не для гостей</option>
           </select>
         </fieldset>
@@ -231,8 +240,9 @@
       <button type="button" class="error__button">Попробовать снова</button>
     </div>
   </template>
-  <!--script src="nouislider/nouislider.js"></script-->
-  <!--script src="pristine/dist/pristine.min.js"></script-->
+  <script src="js/leaflet.js"></script>
+  <script src="js/nouislider.js"></script>
+  <script src="sha256-Pristine-v0.1.9-13-gc205a88/sha256-Pristine-c205a88/dist/pristine.min.js"></script>
   <script src="js/main.js" type="module"></script>
 </body>
 </html>
