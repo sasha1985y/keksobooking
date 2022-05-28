@@ -1,10 +1,9 @@
 import './data.js';
-import './utilites.js';
-import {addCardPlaceHolers} from './cards.js';
+//import './utilites.js';
 import {getFormDisabled} from './form.js';
 import './map.js';
 
-const blockCard = document.getElementById('map-canvas');
-blockCard.appendChild(addCardPlaceHolers());
+//const blockCard = document.getElementById('map-canvas');
+//blockCard.appendChild(addCardPlaceHolers());
 
-getFormDisabled();
+//getFormDisabled();
