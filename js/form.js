@@ -1,5 +1,6 @@
 import {INITIAL_LAT, INITIAL_LNG, mainPinMarker} from './map.js';
 
+//деактивация формы
 const getFormDisabled = () => {
   const offSubmitForms = document.querySelectorAll('.ad-form, .map__filters');
   const offFieldsAndSelects = document.querySelectorAll('fieldset, .map__features, .ad-form-header, .ad-form__element, select, .map__filter');
@@ -11,6 +12,7 @@ const getFormDisabled = () => {
   })
 };
 
+//активация формы
 const getFormAbled = () => {
   const onSubmitForms = document.querySelectorAll('.ad-form, .map__filters');
   const onFieldsAndSelects = document.querySelectorAll('fieldset, .map__features, .ad-form-header, .ad-form__element, select, .map__filter');
@@ -22,12 +24,14 @@ const getFormAbled = () => {
   })
 };
 
+//объект въезда-выезда
 const TimeCheckOut = {
   '12:00': '12:00',
   '13:00': '13:00',
   '14:00': '14:00'
 }
 
+//объект типа жилища
 const TypeOfHouse = {
   bungalow: '0',
   flat: '1000',
@@ -36,6 +40,7 @@ const TypeOfHouse = {
   palace: '10000'
 }
 
+//объект соотношения числа комнат и гостей
 const NumberOfGuests = {
   1: ['1'],
   2: ['1', '2'],
@@ -53,13 +58,20 @@ const roomNumber = adForm.querySelector('#room_number');
 const capacity = adForm.querySelector('#capacity');
 const guestNumber = capacity.querySelectorAll('option');
 
+//валидация въезда-выезда
 const onTimeIntoChange = () => {
-  const timeInto = TimeCheckOut[timeIn.value];
-  timeOut.value = timeInto;
+  timeOut.value = timeIn.value;
 };
 
-formTime.addEventListener('change', onTimeIntoChange);
+timeIn.addEventListener('change', onTimeIntoChange);
 
+const onTimeOutChange = () => {
+  timeIn.value = timeOut.value;
+};
+
+timeOut.addEventListener('change', onTimeOutChange);
+
+//валидация комнат-гостей
 const onTypeHouseChange = () => {
   const minPrice = TypeOfHouse[type.value];
   price.placeholder = minPrice;
@@ -67,15 +79,16 @@ const onTypeHouseChange = () => {
 }
 
 const sliderElement = adForm.querySelector('.ad-form__slider');
+const REQUIRED_PRICE_MAX_VALUE = 100000;
+const MIN_FLAT_PRICE = 1000;
 
-const INITIAL_STATEMENT = `${TypeOfHouse.flat}`;
-
+//начальные настройки слайдера
 noUiSlider.create(sliderElement, {
   range: {
     min: 0,
-    max: 100000,
+    max: REQUIRED_PRICE_MAX_VALUE,
   },
-  start: INITIAL_STATEMENT,
+  start: MIN_FLAT_PRICE,
   step: 1,
   connect: 'lower',
 
@@ -96,30 +109,23 @@ sliderElement.noUiSlider.on('update', () => {
   price.value = sliderElement.noUiSlider.get();
 });
 
+const MIN_BUNGALOW_PRICE = 0;
+const MIN_HOTEL_PRICE = 3000;
+const MIN_HOUSE_PRICE = 5000;
+const MIN_PALACE_PRICE = 10000;
+
+//валидация тип жилища-минимальная цена
 type.addEventListener('change', () => {
-  if (type.value === 'bungalow') {
-    onTypeHouseChange();
-    sliderElement.noUiSlider.set(0);
-  }else if (type.value ==='flat') {
-    onTypeHouseChange();
-    sliderElement.noUiSlider.set(1000);
-  }else if (type.value ==='hotel') {
-    onTypeHouseChange();
-    sliderElement.noUiSlider.set(3000);
-  }else if (type.value ==='house') {
-    onTypeHouseChange();
-    sliderElement.noUiSlider.set(5000);
-  }else if (type.value ==='palace') {
-    onTypeHouseChange();
-    sliderElement.noUiSlider.set(10000);
-  }
+  onTypeHouseChange();
+  sliderElement.noUiSlider.set(parseInt(TypeOfHouse[type.value]), 10);
 });
 
+//валидация количества комнат-гостей
 const validateRooms = () => {
   const roomValue = roomNumber.value;
 
   guestNumber.forEach((guest) => {
-    const isDisabled = (NumberOfGuests[roomValue].indexOf(guest.value) === -1);
+    const isDisabled = (NumberOfGuests[roomValue].includes(guest.value) === false);
     guest.selected = NumberOfGuests[roomValue][0] === guest.value;
     guest.disabled = isDisabled;
     guest.hidden = isDisabled;
@@ -134,6 +140,7 @@ const onRoomNumberChange = () => {
 
 roomNumber.addEventListener('change', onRoomNumberChange);
 
+//валидация обязятельных полей с Pristine
 const pristine = new Pristine(adForm, {
   classTo: 'ad-form__element',
   errorClass: 'img-upload__text--invalid',
@@ -144,9 +151,10 @@ const pristine = new Pristine(adForm, {
 });
 
 const requiredTitle = document.querySelector('#title');
+const REQUIRED_TITLE_MAX_LENGTH = 100;
 
-pristine.addValidator(requiredTitle, function(value) {
-  if (value.length !== 101){
+pristine.addValidator(requiredTitle, (value) => {
+  if (value.length !== REQUIRED_TITLE_MAX_LENGTH){
     return true;
   }
   return false;
@@ -154,8 +162,8 @@ pristine.addValidator(requiredTitle, function(value) {
 
 const requiredPrice = document.querySelector('#price');
 
-pristine.addValidator(requiredPrice, function(value) {
-  if (value !== 100000){
+pristine.addValidator(requiredPrice, (value) => {
+  if (value !== REQUIRED_PRICE_MAX_VALUE){
     return true;
   }
   return false;
@@ -163,13 +171,14 @@ pristine.addValidator(requiredPrice, function(value) {
 
 
 const requiredAddress = document.querySelector('#address');
+const REQUIRED_ADDRESS_MAX_LENGTH = 18;
 
 pristine.addValidator(requiredAddress, function(value) {
-  if (value.length !== 19){
+  if (value.length <= REQUIRED_ADDRESS_MAX_LENGTH){
     return true;
   }
   return false;
-}, 'Максимальная длина 18 символов', 18, false);
+}, 'Максимальная длина 18 символов', 2, false);
 
 adForm.addEventListener('submit', (evt) => {
   if(!pristine.validate()) {
@@ -180,6 +189,7 @@ adForm.addEventListener('submit', (evt) => {
   adForm.removeEventListener('submit', evt, false);
 });
 
+//очистка формы
 const resetButton = adForm.querySelector('.ad-form__reset');
 resetButton.addEventListener('click', (evt) => {
   evt.preventDefault();

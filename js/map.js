@@ -1,5 +1,7 @@
 import {promotions} from './data.js';
 
+console.log(promotions);
+
 const INITIAL_LAT = 35.68421;
 const INITIAL_LNG = 139.75304;
 const initialCoordinates = {lat: INITIAL_LAT, lng: INITIAL_LNG};
@@ -62,28 +64,50 @@ const addPinIcon = L.icon({
   iconAnchor: [20, 40]
 });
 
-
+//контент балуна
 const createCustomPopup = (hotel) => {
-  const balloonTemplate = document.querySelector('#card').content.querySelector('.popup');
-  const popupElement = balloonTemplate.cloneNode(true);
+  const templateContent = document.querySelector('#card')
+    .content
+    .querySelector('.popup').cloneNode(true);
 
-  popupElement.querySelector('.popup__avatar').src = hotel.autor.avatar;
-  popupElement.querySelector('.popup__title').textContent = hotel.offer.title;
-  popupElement.querySelector('.popup__text--address').textContent = hotel.offer.adress;
-  popupElement.querySelector('.popup__text--price').textContent = hotel.offer.price +'₽/ночь';
-  popupElement.querySelector('.popup__type').textContent = hotel.offer.type;
+  const avatarState = templateContent.querySelector('.popup__avatar');
+  if(hotel.autor.avatar) {
+    avatarState.src = hotel.autor.avatar;
+  }else {
+    avatarState.remove();
+  };
+    
+  const titleState = templateContent.querySelector('.popup__title');
+  if(hotel.offer.title) {
+    titleState.textContent = hotel.offer.title;
+  }else {
+    titleState.remove();
+  };
+
+  const adressState = templateContent.querySelector('.popup__text--address');
+  if(hotel.offer.adress) {
+    adressState.textContent = hotel.offer.adress;
+  }else {
+    adressState.remove();
+  };
+
+  const priceState = templateContent.querySelector('.popup__text--price');
+  if(hotel.offer.price) {
+    priceState.textContent = hotel.offer.price +'₽/ночь';
+  }else {
+    priceState.remove();
+  };
+
+  const typeState = templateContent.querySelector('.popup__type');
+  if(hotel.offer.type) {
+    typeState.textContent = hotel.offer.type;
+  }else {
+    typeState.remove();
+  };
 
   const roomPronounce = () => {
     let room;
     switch (hotel.offer.rooms % 10) {
-      case 0:
-      case 5:
-      case 6:
-      case 7:
-      case 8:
-      case 9:
-        room = `${hotel.offer.rooms} комнат`;
-        break;
       case 2:
       case 3:
       case 4:
@@ -91,7 +115,9 @@ const createCustomPopup = (hotel) => {
         break;
       case 1:
         room = `${hotel.offer.rooms} комната`;
-        break;  
+        break;
+      default:
+        room = `${hotel.offer.rooms} комнат`;  
     }
     return room;
   };
@@ -107,50 +133,74 @@ const createCustomPopup = (hotel) => {
     }
     return guest;
   }
+    
+  templateContent.querySelector('.popup__text--capacity').textContent = `${roomPronounce()} ${guestPronounce()}`;
+    
+  templateContent.querySelector('.popup__text--time').textContent = 'Заезд после ' + hotel.offer.checkin + ', выезд до ' + hotel.offer.checkout;
 
-  popupElement.querySelector('.popup__text--capacity').textContent = `${roomPronounce()} ${guestPronounce()}`;
-  popupElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + hotel.offer.checkin + ', выезд до ' + hotel.offer.checkout;
+  const wiFi = templateContent.querySelector('.popup__feature--wifi');
+  wiFi.classList.add('hidden');
+  if(hotel.offer.features.includes('wifi') === true) {
+    wiFi.classList.remove('hidden');
+  }else {
+    wiFi.remove();
+  };
 
-  const popupWifi = (element) => element.indexOf('wifi', 0);
-  const popupDishwasher = (element) => element.indexOf('dishwasher', 0);
-  const popupParking = (element) => element.indexOf('parking', 0);
-  const popupWasher = (element) => element.indexOf('washer', 0);
-  const popupElevator = (element) => element.indexOf('elevator', 0);
-  const popupConditioner = (element) => element.indexOf('conditioner', 0);
+  const dishWasher = templateContent.querySelector('.popup__feature--dishwasher');
+  dishWasher.classList.add('hidden');
+  if(hotel.offer.features.includes('dishwasher') === true) {
+    dishWasher.classList.remove('hidden');
+  }else {
+    dishWasher.remove();
+  };
 
-  const wiFiPopup = popupElement.querySelector('.popup__feature--wifi');
-  wiFiPopup.classList.add('hidden');
-  if(hotel.offer.features.map(popupWifi).indexOf(0, 0) !== -1) {wiFiPopup.classList.remove('hidden');};
+  const parKing = templateContent.querySelector('.popup__feature--parking');
+  parKing.classList.add('hidden');
+  if(hotel.offer.features.includes('parking') === true) {
+    parKing.classList.remove('hidden');
+  }else {
+    parKing.remove();
+  };
 
-  const dishWasherPopup = popupElement.querySelector('.popup__feature--dishwasher');
-  dishWasherPopup.classList.add('hidden');
-  if(hotel.offer.features.map(popupDishwasher).indexOf(0, 0) !== -1) {dishWasherPopup.classList.remove('hidden');};
+  const wasHer = templateContent.querySelector('.popup__feature--washer');
+  wasHer.classList.add('hidden');
+  if(hotel.offer.features.includes('washer') === true) {
+    wasHer.classList.remove('hidden');
+  }else {
+    wasHer.remove();
+  };
 
-  const parKingPopup = popupElement.querySelector('.popup__feature--parking');
-  parKingPopup.classList.add('hidden');
-  if(hotel.offer.features.map(popupParking).indexOf(0, 0) !== -1) {parKingPopup.classList.remove('hidden');};
+  const eleVator = templateContent.querySelector('.popup__feature--elevator');
+  eleVator.classList.add('hidden');
+  if(hotel.offer.features.includes('elevator') === true) {
+    eleVator.classList.remove('hidden');
+  }else {
+    eleVator.remove();
+  };
 
-  const wasHerPopup = popupElement.querySelector('.popup__feature--washer');
-  wasHerPopup.classList.add('hidden');
-  if(hotel.offer.features.map(popupWasher).indexOf(0, 0) !== -1) {wasHerPopup.classList.remove('hidden');};
+  const condItioner = templateContent.querySelector('.popup__feature--conditioner');
+  condItioner.classList.add('hidden');
+  if(hotel.offer.features.includes('conditioner') === true) {
+    condItioner.classList.remove('hidden');
+  }else {
+    condItioner.remove();
+  };
+    
+  const popupDescription = templateContent.querySelector('.popup__description');
+  if(hotel.offer.description) {
+    popupDescription.textContent = hotel.offer.description;
+  }else {
+    popupDescription.remove();
+  };
 
-  const eleVatorPopup = popupElement.querySelector('.popup__feature--elevator');
-  eleVatorPopup.classList.add('hidden');
-  if(hotel.offer.features.map(popupElevator).indexOf(0, 0) !== -1) {eleVatorPopup.classList.remove('hidden');};
+  const popupPhoto = templateContent.querySelector('.popup__photo');
+  if('photos' in hotel.offer) {
+    popupPhoto.src = hotel.offer.photos;
+  }else {
+   popupPhoto.remove();
+  };
 
-  const condItionerPopup = popupElement.querySelector('.popup__feature--conditioner');
-  condItionerPopup.classList.add('hidden');
-  if(hotel.offer.features.map(popupConditioner).indexOf(0, 0) !== -1) {condItionerPopup.classList.remove('hidden');};
-
-  const popupElementDescription = popupElement.querySelector('.popup__description');
-  if(hotel.offer.description.length !== 0) {popupElementDescription.textContent = hotel.offer.description;};
-
-  popupElement.querySelector('.popup__photo').src = hotel.offer.photos;
-  const popupElementPhoto = popupElement.querySelector('.popup__photos');
-  popupElementPhoto.classList.add('hidden');
-  if(hotel.offer.photos !== '') {popupElementPhoto.classList.remove('hidden');};
-
-  return popupElement;
+  return templateContent;
 };
 
 promotions.forEach((hotel) => {

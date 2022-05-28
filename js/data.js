@@ -84,7 +84,6 @@ const DESCRIPTIONS =[
 ];
 
 const PHOTOS = [
-  '',
   'https://assets.htmlacademy.ru/content/intensive/javascript-1/keksobooking/duonguyen-8LrGtIxxa4w.jpg',
   'https://assets.htmlacademy.ru/content/intensive/javascript-1/keksobooking/brandon-hoogenboom-SNxQGWxZQi0.jpg',
   'https://assets.htmlacademy.ru/content/intensive/javascript-1/keksobooking/claire-rendall-b6kAwr1i0Iw.jpg'
@@ -121,7 +120,7 @@ const addService = () => ({
     checkout: CHECKOUTS[getRandomNumber(0, CHECKOUTS.length -1)],
     features: shuffleArray(FEATURES).slice(0, getRandomNumber(0, FEATURES.length)),
     description: shuffleArray(DESCRIPTIONS).slice(0, getRandomNumber(0, DESCRIPTIONS.length)),
-    photos: PHOTOS[getRandomNumber(0, PHOTOS.length -1)]
+    photos: [PHOTOS[getRandomNumber(0, PHOTOS.length -1)]]
   },
   location: {
     lat: getLatitude(),
