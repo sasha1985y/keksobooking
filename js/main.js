@@ -1,9 +1,13 @@
-import './data.js';
+//import './data.js';
 //import './utilites.js';
-import {getFormDisabled} from './form.js';
+import  {setFormSubmit} from './form.js';
 import './map.js';
-
-//const blockCard = document.getElementById('map-canvas');
-//blockCard.appendChild(addCardPlaceHolers());
-
-//getFormDisabled();
+//import {sendRequest} from './fetch.js';
+//import { promotions } from './data.js';
+setFormSubmit();
+/*sendRequest((data) => {
+  data.slice(0, 10).forEach((hotel) => {
+    similarHotels(hotel);
+  });
+});
+sendRequest();*/

@@ -1,4 +1,5 @@
 import {INITIAL_LAT, INITIAL_LNG, mainPinMarker} from './map.js';
+import {sendRequest} from './fetch.js';
 
 //деактивация формы
 const getFormDisabled = () => {
@@ -23,13 +24,6 @@ const getFormAbled = () => {
     (element.disabled = !element.disabled);
   })
 };
-
-//объект въезда-выезда
-const TimeCheckOut = {
-  '12:00': '12:00',
-  '13:00': '13:00',
-  '14:00': '14:00'
-}
 
 //объект типа жилища
 const TypeOfHouse = {
@@ -180,14 +174,15 @@ pristine.addValidator(requiredAddress, function(value) {
   return false;
 }, 'Максимальная длина 18 символов', 2, false);
 
-adForm.addEventListener('submit', (evt) => {
-  if(!pristine.validate()) {
-    evt.preventDefault();
-  } else {
-    return true;
-  }
-  adForm.removeEventListener('submit', evt, false);
-});
+const setFormSubmit = () => {
+  adForm.addEventListener('submit', (evt) => {
+    if(!pristine.validate()) {
+      evt.preventDefault();
+    } else {
+      return true;
+    }
+  });
+}
 
 //очистка формы
 const resetButton = adForm.querySelector('.ad-form__reset');
@@ -199,7 +194,6 @@ resetButton.addEventListener('click', (evt) => {
     lng: INITIAL_LNG
   })
   sliderElement.noUiSlider.set(1000);
-  resetButton.removeEventListener('click', evt, false);
 });
 
-export {getFormDisabled, getFormAbled};
+export {setFormSubmit};
