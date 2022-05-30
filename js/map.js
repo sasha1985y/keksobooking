@@ -1,6 +1,7 @@
-import {promotions} from './data.js';
+import {sendRequest} from './fetch.js';
 
-console.log(promotions);
+let hotels = [];
+const MAX_PINS = 10;
 
 const INITIAL_LAT = 35.68421;
 const INITIAL_LNG = 139.75304;
@@ -13,16 +14,7 @@ const Map = {
   ZOOM: 11.5
 }
 
-const map = L.map('map-canvas')
-
-  .on('load', () => {
-    addresses.value = `${initialCoordinates['lat']},${initialCoordinates['lng']}`;
-  })
-
-  .setView({
-    lat: INITIAL_LAT,
-    lng: INITIAL_LNG,
-  }, Map.ZOOM);
+const map = L.map('map-canvas');
 
 L.tileLayer(
   Map.TILE,
@@ -64,11 +56,13 @@ const addPinIcon = L.icon({
   iconAnchor: [20, 40]
 });
 
+
+
 //контент балуна
 const createCustomPopup = (hotel) => {
   const templateContent = document.querySelector('#card')
-    .content
-    .querySelector('.popup').cloneNode(true);
+  .content
+  .querySelector('.popup').cloneNode(true);
 
   const avatarState = templateContent.querySelector('.popup__avatar');
   if(hotel.autor.avatar) {
@@ -132,7 +126,7 @@ const createCustomPopup = (hotel) => {
       guest = `${hotel.offer.guests}`; 
     }
     return guest;
-  }
+  };
     
   templateContent.querySelector('.popup__text--capacity').textContent = `${roomPronounce()} ${guestPronounce()}`;
     
@@ -199,29 +193,63 @@ const createCustomPopup = (hotel) => {
   }else {
    popupPhoto.remove();
   };
-
+  
   return templateContent;
 };
 
-promotions.forEach((hotel) => {
+const onSuccess = (data) => {
+  hotels = data.slice();
+  
+  renderPins(hotels.slice(0, MAX_PINS));
+  console.log(hotels);
+};
+
+const similarHotels = (hotel) => {
+  
+};
+
+hotels.forEach((hotel) => {
   const {
     location:{
       lat,
       lng
     }
   } = hotel;
-  const adPin = L.marker({
+  const adPins = L.marker({
     lat,
     lng, 
   },
   { draggable: false,
     icon: addPinIcon,
   });
-
-  adPin
-    .addTo(map)
-    .bindPopup(createCustomPopup(hotel));
+  adPins
+  .addTo(map)
+  .bindPopup(createCustomPopup(hotel));
 });
 
 
-export {INITIAL_LAT, INITIAL_LNG, mainPinMarker};
+
+const renderPins = (pins) => {
+  pins.forEach((pin) => {
+    similarHotels(pin);
+  })
+};
+
+
+
+const onError = (error) => {
+  console.log(error);
+};
+
+
+map.on('load', () => {
+  addresses.value = `${initialCoordinates['lat']},${initialCoordinates['lng']}`;
+  sendRequest(onSuccess, onError, 'GET');
+})
+
+.setView({
+  lat: INITIAL_LAT,
+  lng: INITIAL_LNG,
+}, Map.ZOOM);
+
+export {INITIAL_LAT, INITIAL_LNG, mainPinMarker, createCustomPopup/*, similarHotels*/};
