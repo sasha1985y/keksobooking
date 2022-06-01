@@ -1,6 +1,8 @@
 import {INITIAL_LAT, INITIAL_LNG, mainPinMarker} from './map.js';
 import {sendRequest} from './fetch.js';
 
+const isEscapeKey = (evt) => evt.key === 'Escape';
+
 //деактивация формы
 const getFormDisabled = () => {
   const offSubmitForms = document.querySelectorAll('.ad-form, .map__filters');
@@ -45,7 +47,6 @@ const NumberOfGuests = {
 const adForm = document.querySelector('.ad-form');
 const type = adForm.querySelector('#type');
 const price = adForm.querySelector('#price');
-const formTime = adForm.querySelector('.ad-form__element--time');
 const timeIn = adForm.querySelector('#timein');
 const timeOut = adForm.querySelector('#timeout');
 const roomNumber = adForm.querySelector('#room_number');
@@ -174,26 +175,124 @@ pristine.addValidator(requiredAddress, function(value) {
   return false;
 }, 'Максимальная длина 18 символов', 2, false);
 
+const messageSuccessTemplate = document.querySelector('#success')
+  .content
+  .querySelector('.success');
+
+const messageErrorTemplate = document.querySelector('#error')
+  .content
+  .querySelector('.error');
+
+//добавление-удаление сообщений об ошибке или успехе
+const messageSuccess = messageSuccessTemplate.cloneNode(true);
+const messageError = messageErrorTemplate.cloneNode(true);
+
+const getSuccessMessage = () => {
+  document.body.appendChild(messageSuccess);
+};
+
+const getErrorMessage = () => {
+  document.body.appendChild(messageError);
+};
+
+const removeSuccessMessage = () => {
+  if(messageSuccess) {
+    messageSuccess.remove();
+  }
+};
+
+const removeErrorMessage = () => {
+  if(messageError) {
+    messageError.remove();
+  }
+};
+
+const submitButton = adForm.querySelector('.ad-form__submit');
+
+//блокировка кнопок
+const blockSubmitButton = () => {
+  submitButton.disabled = true;
+};
+
+const unBlockSubmitButton = () => {
+  submitButton.disabled = false;
+};
+
+//найдём-закроем открытый попап лефлета
+const closeActivePopup = () => {
+  const activePopup = document.querySelector('.leaflet-popup');
+  if(activePopup) {
+    activePopup.remove();
+  }
+}
+
+//постпроцессы успеха-неуспеха
+const onSuccess = () => {
+  getSuccessMessage();
+  adForm.reset();
+  closeActivePopup();
+  mainPinMarker.setLatLng({
+    lat: INITIAL_LAT,
+    lng: INITIAL_LNG
+  })
+  sliderElement.noUiSlider.set(MIN_FLAT_PRICE);
+};
+
+const onError = () => {
+  getErrorMessage();
+};
+
+//отправка формы
 const setFormSubmit = () => {
   adForm.addEventListener('submit', (evt) => {
-    if(!pristine.validate()) {
-      evt.preventDefault();
-    } else {
-      return true;
+    evt.preventDefault();
+    if(pristine.validate()) {
+      blockSubmitButton();
+      sendRequest(onSuccess, onError, 'POST', new FormData(adForm));
     }
   });
-}
+};
 
 //очистка формы
 const resetButton = adForm.querySelector('.ad-form__reset');
 resetButton.addEventListener('click', (evt) => {
   evt.preventDefault();
   adForm.reset();
+  closeActivePopup();
   mainPinMarker.setLatLng({
     lat: INITIAL_LAT,
     lng: INITIAL_LNG
   })
-  sliderElement.noUiSlider.set(1000);
+  sliderElement.noUiSlider.set(MIN_FLAT_PRICE);
 });
+
+//очистка эскейп
+document.addEventListener('keydown', (evt) => {
+  if (isEscapeKey(evt)) {
+    evt.preventDefault();
+    removeSuccessMessage();
+    removeErrorMessage();
+    unBlockSubmitButton();
+  }
+});
+
+//очистка кликом
+messageSuccess.addEventListener('click', () => {
+  removeSuccessMessage();
+  unBlockSubmitButton();
+});
+
+messageError.addEventListener('click', () => {
+  removeErrorMessage();
+  unBlockSubmitButton();
+});
+
+//пробовать снова
+const errorButton = messageError.querySelector('.error__button');
+errorButton.addEventListener('click', () => {
+  removeErrorMessage();
+  unBlockSubmitButton();
+});
+
 
 export {setFormSubmit};
