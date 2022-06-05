@@ -62,7 +62,7 @@ const createCustomPopup = (hotel) => {
       guest = `для ${hotel.offer.guests} гостя`;
     } else if (hotel.offer.guests % 10 > 1) {
       guest = `для ${hotel.offer.guests} гостей`;
-    } else if (hotel.offer.guests === 'не для гостей') {
+    } else if (hotel.offer.guests === 0) {
       guest = `${hotel.offer.guests}`; 
     }
     return guest;

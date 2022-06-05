@@ -1,7 +1,17 @@
-import {INITIAL_LAT, INITIAL_LNG, mainPinMarker} from './map.js';
+import {INITIAL_LAT, INITIAL_LNG, mainPinMarker, onMapFiltersChange, map, Map} from './map.js';
 import {sendRequest} from './fetch.js';
+import {isEscapeKey} from './utilites.js';
+import {resetImages} from './userimage-loader.js';
 
-const isEscapeKey = (evt) => evt.key === 'Escape';
+const MIN_BUNGALOW_PRICE = '0';
+const MIN_FLAT_PRICE = '1000';
+const MIN_HOTEL_PRICE = '3000';
+const MIN_HOUSE_PRICE = '5000';
+const MIN_PALACE_PRICE = '10000';
+const REQUIRED_PRICE_MAX_VALUE = 100000;
+
+const REQUIRED_ADDRESS_MAX_LENGTH = 18;
+const REQUIRED_TITLE_MAX_LENGTH = 100;
 
 //деактивация формы
 const getFormDisabled = () => {
@@ -29,11 +39,11 @@ const getFormAbled = () => {
 
 //объект типа жилища
 const TypeOfHouse = {
-  bungalow: '0',
-  flat: '1000',
-  hotel: '3000',
-  house: '5000',
-  palace: '10000'
+  bungalow: MIN_BUNGALOW_PRICE,
+  flat: MIN_FLAT_PRICE,
+  hotel: MIN_HOTEL_PRICE,
+  house: MIN_HOUSE_PRICE,
+  palace: MIN_PALACE_PRICE
 }
 
 //объект соотношения числа комнат и гостей
@@ -74,8 +84,6 @@ const onTypeHouseChange = () => {
 }
 
 const sliderElement = adForm.querySelector('.ad-form__slider');
-const REQUIRED_PRICE_MAX_VALUE = 100000;
-const MIN_FLAT_PRICE = 1000;
 
 //начальные настройки слайдера
 noUiSlider.create(sliderElement, {
@@ -104,10 +112,6 @@ sliderElement.noUiSlider.on('update', () => {
   price.value = sliderElement.noUiSlider.get();
 });
 
-const MIN_BUNGALOW_PRICE = 0;
-const MIN_HOTEL_PRICE = 3000;
-const MIN_HOUSE_PRICE = 5000;
-const MIN_PALACE_PRICE = 10000;
 
 //валидация тип жилища-минимальная цена
 type.addEventListener('change', () => {
@@ -146,7 +150,6 @@ const pristine = new Pristine(adForm, {
 });
 
 const requiredTitle = document.querySelector('#title');
-const REQUIRED_TITLE_MAX_LENGTH = 100;
 
 pristine.addValidator(requiredTitle, (value) => {
   if (value.length !== REQUIRED_TITLE_MAX_LENGTH){
@@ -166,7 +169,6 @@ pristine.addValidator(requiredPrice, (value) => {
 
 
 const requiredAddress = document.querySelector('#address');
-const REQUIRED_ADDRESS_MAX_LENGTH = 18;
 
 pristine.addValidator(requiredAddress, function(value) {
   if (value.length <= REQUIRED_ADDRESS_MAX_LENGTH){
@@ -226,15 +228,31 @@ const closeActivePopup = () => {
   }
 }
 
+const formMapFilters = document.querySelector('.map__filters');
+
 //постпроцессы успеха-неуспеха
 const onSuccess = () => {
   getSuccessMessage();
   adForm.reset();
+  formMapFilters.reset();
+  onMapFiltersChange();
   closeActivePopup();
+  resetImages();
   mainPinMarker.setLatLng({
     lat: INITIAL_LAT,
     lng: INITIAL_LNG
   })
+
+  map.on('load', () => {
+    addresses.value = `${initialCoordinates['lat']},${initialCoordinates['lng']}`;
+    sendRequest(onSuccess, onError, 'GET');
+  })
+  
+  .setView({
+    lat: INITIAL_LAT,
+    lng: INITIAL_LNG,
+  }, Map.ZOOM);
+  
   sliderElement.noUiSlider.set(MIN_FLAT_PRICE);
 };
 
@@ -258,11 +276,25 @@ const resetButton = adForm.querySelector('.ad-form__reset');
 resetButton.addEventListener('click', (evt) => {
   evt.preventDefault();
   adForm.reset();
+  formMapFilters.reset();
+  onMapFiltersChange();
   closeActivePopup();
+  resetImages();
   mainPinMarker.setLatLng({
     lat: INITIAL_LAT,
     lng: INITIAL_LNG
   })
+
+  map.on('load', () => {
+    addresses.value = `${initialCoordinates['lat']},${initialCoordinates['lng']}`;
+    sendRequest(onSuccess, onError, 'GET');
+  })
+  
+  .setView({
+    lat: INITIAL_LAT,
+    lng: INITIAL_LNG,
+  }, Map.ZOOM);
+
   sliderElement.noUiSlider.set(MIN_FLAT_PRICE);
 });
 
@@ -273,6 +305,7 @@ document.addEventListener('keydown', (evt) => {
     removeSuccessMessage();
     removeErrorMessage();
     unBlockSubmitButton();
+    document.addEventListener('keydown', evt);
   }
 });
 
@@ -295,4 +328,4 @@ errorButton.addEventListener('click', () => {
 });
 
 
-export {setFormSubmit};
+export {getFormDisabled, getFormAbled, setFormSubmit};
