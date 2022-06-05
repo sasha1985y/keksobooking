@@ -78,10 +78,10 @@
           <legend class="ad-form-header__title">Ваша фотография (для карты)</legend>
           <div class="ad-form-header__upload">
             <div class="ad-form-header__preview">
-              <img src="img/muffin-grey.svg" alt="Аватар пользователя" width="40" height="44">
+              <img id="avatar-preview" src="img/muffin-grey.svg" alt="Аватар пользователя" width="40" height="44">
             </div>
             <div class="ad-form__field">
-              <input type="file" id="avatar" name="avatar" class="ad-form-header__input visually-hidden">
+              <input type="file" id="avatar" name="avatar" class="ad-form-header__input visually-hidden" accept="image/*">
               <label class="ad-form-header__drop-zone" for="avatar">Загрузить<br>фото...</label>
             </div>
             <p class="ad-form-header__info">Заполните все обязательные поля, назначьте цену, загрузите аватар и фото жилья. Придумайте интересное описание. Оно сделает объявление более живым и привлекательным. Получившееся объявление должно давать гостям полное представление о вашем жилье.</p>
@@ -113,7 +113,7 @@
         </fieldset>
         <fieldset class="ad-form__element">
           <label class="ad-form__label" for="price">Цена за ночь, руб.</label>
-          <input id="price" name="price" type="number" min="0" max="100000" placeholder="0" required
+          <input id="price" name="price" type="number" min="0" max="100000" placeholder="1000" required
             data-pristine-required-message = "Обязательное поле"
             data-pristine-max-message = "Максимальное значение — 100000">
           <div class="ad-form__slider"></div>
@@ -168,7 +168,7 @@
           <label class="ad-form__label" for="description">Описание (не обязательно)</label>
           <textarea id="description" name="description" placeholder="Здесь расскажите о том, какое ваше жилье замечательное и вообще"></textarea>
         </fieldset>
-        <fieldset class="ad-form__element ad-form__element--wide">
+        <fieldset class="ad-form__element ad-form__element--wide ad-form__element--file">
           <label class="ad-form__label">Фотография жилья</label>
           <div class="ad-form__photo-container">
             <div class="ad-form__upload">

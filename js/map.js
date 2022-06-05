@@ -1,5 +1,8 @@
 import {sendRequest} from './fetch.js';
 import {createCustomPopup} from './baloon.js';
+import  {getFormAbled} from './form.js';
+import  {filterData} from './filter-pins.js';
+import  {debounce, createCustomError} from './utilites.js';
 
 let hotels = [];
 const MAX_PINS = 10;
@@ -51,6 +54,8 @@ const mainPinMove = () => {
 };
 mainPinMove();
 
+const markerGroup = L.layerGroup().addTo(map);
+
 const addPinIcon = L.icon({
   iconUrl: './img/leaflet-svg/pin.svg',
   iconSize: [40, 40],
@@ -74,7 +79,7 @@ const similarHotels = (hotel) => {
   });
 
   adPins
-  .addTo(map)
+  .addTo(markerGroup)
   .bindPopup(createCustomPopup(hotel));
   
 };
@@ -86,28 +91,30 @@ const renderPins = (pins) => {
   })
 };
 
+
+const removeMapPin = () => {
+  markerGroup.clearLayers();
+}
+
+const onMapFiltersChange = debounce(() => {
+  removeMapPin();
+  renderPins(filterData(hotels));
+});
+
+const mapFilters = document.querySelector('.map__filters');
+
 const onSuccess = (data) => {
+  getFormAbled();
   hotels = data.slice();
   
   renderPins(hotels.slice(0, MAX_PINS));
+  mapFilters.addEventListener('change', () => onMapFiltersChange(hotels));
 };
 
 //попап ошибки
 const onError = (error) => {
-  const errorImg = document.createElement('img');
-  const errorDiv = document.createElement('div');
-  const errorPopup = document.createElement('span');
-  errorDiv.appendChild(errorImg);
-  errorImg.classList.add('error-img');
-  errorImg.setAttribute('src', 'img/spot.png');
-  errorImg.setAttribute('alt', 'табло ошибки');
-  errorDiv.appendChild(errorPopup);
-  const errorPlace = document.querySelector('.ad-form__element--submit');
-  errorPlace.appendChild(errorDiv);
-  errorDiv.classList.add('error-style');
-  errorPopup.textContent = `${error}`;
+  createCustomError(error);
 };
-
 
 map.on('load', () => {
   addresses.value = `${initialCoordinates['lat']},${initialCoordinates['lng']}`;
@@ -119,4 +126,5 @@ map.on('load', () => {
   lng: INITIAL_LNG,
 }, Map.ZOOM);
 
-export {INITIAL_LAT, INITIAL_LNG, mainPinMarker};
+
+export {INITIAL_LAT, INITIAL_LNG, mainPinMarker, onMapFiltersChange, map, Map};

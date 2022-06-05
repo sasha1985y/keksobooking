@@ -1,25 +1,31 @@
-const shuffleArray = (array) => {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
+const DEBOUNCE_INTERVAL = 500;
+
+const debounce = (callback, timeoutDelay = DEBOUNCE_INTERVAL) => {
+  let timeoutId;
+
+  return (...rest) => {
+    clearTimeout(timeoutId);
+
+    timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
+  };
 };
 
-const getRandomNumber = (a, b) => {
-  const minimum = Math.ceil(Math.min(Math.abs(a), Math.abs(b)));
-  const maximum = Math.floor(Math.max(Math.abs(a), Math.abs(b)));
-  const result = Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;
-  return result;
+const createCustomError = (error) => {
+  const errorImg = document.createElement('img');
+  const errorDiv = document.createElement('div');
+  const errorPopup = document.createElement('span');
+  errorDiv.appendChild(errorImg);
+  errorImg.classList.add('error-img');
+  errorImg.src = 'img/spot.png';
+  errorImg.alt = 'табло_ошибки';
+  errorDiv.appendChild(errorPopup);
+  const errorPlace = document.querySelector('.ad-form__element--submit');
+  errorPlace.appendChild(errorDiv);
+  errorDiv.classList.add('error-style');
+  errorPopup.textContent = `${error}`;
 };
 
-const getRandomDigits = () => getRandomNumber(5, 5);
+const isEscapeKey = (evt) => evt.key === 'Escape';
 
-function getRandomPositiveFloat (a, b, digits = getRandomDigits()) {
-  const lower = Math.min(Math.abs(a), Math.abs(b));
-  const upper = Math.max(Math.abs(a), Math.abs(b));
-  const result = Math.random() * (upper - lower) + lower;
-  return + result.toFixed(digits);
-};
 
-export {shuffleArray, getRandomNumber, getRandomPositiveFloat};
+export {debounce, createCustomError, isEscapeKey};

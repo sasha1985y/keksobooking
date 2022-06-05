@@ -1,4 +1,5 @@
 import './baloon.js';
-import  {setFormSubmit} from './form.js';
+import  {getFormDisabled, setFormSubmit} from './form.js';
 
+getFormDisabled();
 setFormSubmit();
