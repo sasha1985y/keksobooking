@@ -1,15 +1,15 @@
 const FILE_TYPES = ['svg', 'jpg', 'jpeg', 'png', 'gif'];
-const ERROR_CONTAINERS = document.querySelectorAll('.ad-form-header, .ad-form__element--file');
 const TIME_DELETE_ERROR = 5000;
 const MAX_LENGTH_LOADING_IMAGES = 3;
 
 
+const errorContainers = document.querySelectorAll('.ad-form-header, .ad-form__element--file');
 const adForm = document.querySelector('.ad-form');
 const avatarChooser = adForm.querySelector('#avatar');
 const avatarPreview = adForm.querySelector('#avatar-preview');
 const defaultAvatarPreview = avatarPreview.src;
-const lodgingChooser = adForm.querySelector('#images');
-const lodgingImageContainer = adForm.querySelector('.ad-form__photo');
+const flatChooser = adForm.querySelector('#images');
+const flatImageContainer = adForm.querySelector('.ad-form__photo');
 
 const checkMatches = (element) => FILE_TYPES.some((it) => element.endsWith(it));
 
@@ -33,7 +33,7 @@ avatarChooser.addEventListener('change', () => {
   if (matches) {
     avatarPreview.src = URL.createObjectURL(file);
   } else {
-    showErrorMessage(ERROR_CONTAINERS[0]);
+    showErrorMessage(errorContainers[0]);
   }
 });
 
@@ -45,11 +45,11 @@ const createImage = () => {
   return image;
 };
 
-lodgingImageContainer.style.display = 'flex';
-lodgingImageContainer.style.gap = '5px';
+flatImageContainer.style.display = 'flex';
+flatImageContainer.style.gap = '5px';
 
-lodgingChooser.addEventListener('change', () => {
-  const files = Array.from(lodgingChooser.files);
+flatChooser.addEventListener('change', () => {
+  const files = Array.from(flatChooser.files);
 
   files.forEach((file) => {
     const fileName = file.name.toLowerCase();
@@ -58,20 +58,20 @@ lodgingChooser.addEventListener('change', () => {
     if (matches) {
       const image = createImage();
       image.src = URL.createObjectURL(file);
-      if (lodgingImageContainer.children.length < MAX_LENGTH_LOADING_IMAGES) {
-        lodgingImageContainer.append(image);
+      if (flatImageContainer.children.length < MAX_LENGTH_LOADING_IMAGES) {
+        flatImageContainer.append(image);
       } else {
-        lodgingImageContainer.children[lodgingImageContainer.children.length - 1].remove();
-        lodgingImageContainer.insertAdjacentElement('afterbegin', image);
+        flatImageContainer.children[flatImageContainer.children.length - 1].remove();
+        flatImageContainer.insertAdjacentElement('afterbegin', image);
       }
     } else {
-      showErrorMessage(ERROR_CONTAINERS[1]);
+      showErrorMessage(errorContainers[1]);
     }
   });
 });
 
 const resetImages = () => {
-  const images = Array.from(lodgingImageContainer.children);
+  const images = Array.from(flatImageContainer.children);
   avatarPreview.src = defaultAvatarPreview;
 
   if (images.length > 0) {

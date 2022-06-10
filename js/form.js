@@ -1,7 +1,7 @@
 import {INITIAL_LAT, INITIAL_LNG, mainPinMarker, onMapFiltersChange, map, Map} from './map.js';
 import {sendRequest} from './fetch.js';
 import {isEscapeKey} from './utilites.js';
-import {resetImages} from './userimage-loader.js';
+import {resetImages} from './user-image-loader.js';
 
 const MIN_BUNGALOW_PRICE = '0';
 const MIN_FLAT_PRICE = '1000';
@@ -27,9 +27,9 @@ const getFormDisabled = () => {
 
 //активация формы
 const getFormAbled = () => {
-  const onSubmitForms = document.querySelectorAll('.ad-form, .map__filters');
+  const submitForms = document.querySelectorAll('.ad-form, .map__filters');
   const onFieldsAndSelects = document.querySelectorAll('fieldset, .map__features, .ad-form-header, .ad-form__element, select, .map__filter');
-  onSubmitForms.forEach((element) => {
+  submitForms.forEach((element) => {
     element.classList.remove('ad-form--disabled'); 
   })
   onFieldsAndSelects.forEach((element) => {
@@ -213,11 +213,15 @@ const submitButton = adForm.querySelector('.ad-form__submit');
 
 //блокировка кнопок
 const blockSubmitButton = () => {
-  submitButton.disabled = true;
+  if(submitButton.disabled === false) {
+    submitButton.disabled = true;
+  }
 };
 
 const unBlockSubmitButton = () => {
-  submitButton.disabled = false;
+  if(submitButton.disabled === true) {
+    submitButton.disabled = false;
+  }
 };
 
 //найдём-закроем открытый попап лефлета
@@ -299,15 +303,21 @@ resetButton.addEventListener('click', (evt) => {
 });
 
 //очистка эскейп
-document.addEventListener('keydown', (evt) => {
-  if (isEscapeKey(evt)) {
-    evt.preventDefault();
-    removeSuccessMessage();
-    removeErrorMessage();
-    unBlockSubmitButton();
-    document.addEventListener('keydown', evt);
-  }
-});
+const getEscapeCleaner = () => {
+  document.addEventListener('keydown', (evt) => {
+    if (isEscapeKey(evt)) {
+      evt.preventDefault();
+      closeActivePopup();
+      removeSuccessMessage();
+      removeErrorMessage();
+      unBlockSubmitButton();
+      document.removeEventListener('keydown', evt)
+    } else {
+      document.removeEventListener('keydown', evt)
+    }
+  })
+};
+getEscapeCleaner();
 
 //очистка кликом
 messageSuccess.addEventListener('click', () => {
