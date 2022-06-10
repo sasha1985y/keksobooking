@@ -1,14 +1,15 @@
 import {sendRequest} from './fetch.js';
 import {createCustomPopup} from './baloon.js';
-import  {getFormAbled} from './form.js';
-import  {filterData} from './filter-pins.js';
-import  {debounce, createCustomError} from './utilites.js';
+import {getFormAbled} from './form.js';
+import {filterData} from './filter-pins.js';
+import {debounce, createCustomError} from './utilites.js';
+
+const INITIAL_LAT = 35.68421;
+const INITIAL_LNG = 139.75304;
 
 let hotels = [];
 const MAX_PINS = 10;
 
-const INITIAL_LAT = 35.68421;
-const INITIAL_LNG = 139.75304;
 const initialCoordinates = {lat: INITIAL_LAT, lng: INITIAL_LNG};
 const addresses = document.querySelector('#address');
 

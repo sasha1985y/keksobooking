@@ -7,35 +7,35 @@ const createCustomPopup = (hotel) => {
   const avatarState = templateContent.querySelector('.popup__avatar');
   if(hotel.author.avatar) {
     avatarState.src = hotel.author.avatar;
-  }else {
+  } else {
     avatarState.remove();
   };
     
   const titleState = templateContent.querySelector('.popup__title');
   if(hotel.offer.title) {
     titleState.textContent = hotel.offer.title;
-  }else {
+  } else {
     titleState.remove();
   };
 
   const adressState = templateContent.querySelector('.popup__text--address');
   if(hotel.offer.adress) {
     adressState.textContent = hotel.offer.adress;
-  }else {
+  } else {
     adressState.remove();
   };
 
   const priceState = templateContent.querySelector('.popup__text--price');
   if(hotel.offer.price) {
     priceState.textContent = hotel.offer.price +'₽/ночь';
-  }else {
+  } else {
     priceState.remove();
   };
 
   const typeState = templateContent.querySelector('.popup__type');
   if(hotel.offer.type) {
     typeState.textContent = hotel.offer.type;
-  }else {
+  } else {
     typeState.remove();
   };
 
@@ -76,61 +76,61 @@ const createCustomPopup = (hotel) => {
   wiFi.classList.add('hidden');
   if(hotel.offer.features && hotel.offer.features.includes('wifi') === true) {
     wiFi.classList.remove('hidden');
-  }else {
+  } else {
     wiFi.remove();
   };
 
-  const dishWasher = templateContent.querySelector('.popup__feature--dishwasher');
-  dishWasher.classList.add('hidden');
+  const _dishwasher = templateContent.querySelector('.popup__feature--dishwasher');
+  _dishwasher.classList.add('hidden');
   if(hotel.offer.features && hotel.offer.features.includes('dishwasher') === true) {
-    dishWasher.classList.remove('hidden');
-  }else {
-    dishWasher.remove();
+    _dishwasher.classList.remove('hidden');
+  } else {
+    _dishwasher.remove();
   };
 
-  const parKing = templateContent.querySelector('.popup__feature--parking');
-  parKing.classList.add('hidden');
+  const _parking = templateContent.querySelector('.popup__feature--parking');
+  _parking.classList.add('hidden');
   if(hotel.offer.features && hotel.offer.features.includes('parking') === true) {
-    parKing.classList.remove('hidden');
-  }else {
-    parKing.remove();
+    _parking.classList.remove('hidden');
+  } else {
+    _parking.remove();
   };
 
-  const wasHer = templateContent.querySelector('.popup__feature--washer');
-  wasHer.classList.add('hidden');
+  const _washer = templateContent.querySelector('.popup__feature--washer');
+  _washer.classList.add('hidden');
   if(hotel.offer.features && hotel.offer.features.includes('washer') === true) {
-    wasHer.classList.remove('hidden');
-  }else {
-    wasHer.remove();
+    _washer.classList.remove('hidden');
+  } else {
+    _washer.remove();
   };
 
-  const eleVator = templateContent.querySelector('.popup__feature--elevator');
-  eleVator.classList.add('hidden');
+  const _elevator = templateContent.querySelector('.popup__feature--elevator');
+  _elevator.classList.add('hidden');
   if(hotel.offer.features && hotel.offer.features.includes('elevator') === true) {
-    eleVator.classList.remove('hidden');
-  }else {
-    eleVator.remove();
+    _elevator.classList.remove('hidden');
+  } else {
+    _elevator.remove();
   };
 
-  const condItioner = templateContent.querySelector('.popup__feature--conditioner');
-  condItioner.classList.add('hidden');
+  const _conditioner = templateContent.querySelector('.popup__feature--conditioner');
+  _conditioner.classList.add('hidden');
   if(hotel.offer.features && hotel.offer.features.includes('conditioner') === true) {
-    condItioner.classList.remove('hidden');
-  }else {
-    condItioner.remove();
+    _conditioner.classList.remove('hidden');
+  } else {
+    _conditioner.remove();
   };
     
   const popupDescription = templateContent.querySelector('.popup__description');
   if(hotel.offer.description) {
     popupDescription.textContent = hotel.offer.description;
-  }else {
+  } else {
     popupDescription.remove();
   };
 
   const popupPhoto = templateContent.querySelector('.popup__photo');
   if('photos' in hotel.offer) {
     popupPhoto.src = hotel.offer.photos;
-  }else {
+  } else {
    popupPhoto.remove();
   };
   
